@@ -1,5 +1,5 @@
 import asyncio
-from typing import Tuple, List
+from typing import Tuple, List, Callable
 
 import httpx
 import numpy as np
@@ -122,11 +122,11 @@ def compose_notification(bus: dict) -> str:
     return f"Bus toward {bus.get('direction', '')} on {bus.get('st', '')}. Now between {bus.get('range_left', '')} and {bus.get('range_right', '')}, closer to {bus.get('closerTo', '')}"
 
 
-def bus_notify_filter(bus: dict) -> bool:
-    return bus["st"] and bus["direction"] == "WEST"
+def bus_notify_filter_testonly(bus: dict) -> bool:
+    return bus["st"] == 49 and bus["direction"] == "WEST" and 5 <= bus["range_left"] <= 7
 
 
-async def fetch_main(apply_filter: bool):
+async def fetch_main(apply_filter: bool, bus_notify_filter: Callable[[dict], bool]):
     bus_result, conversion = await asyncio.gather(fetch_bus_loc(0, ROUTE.R_50), fetch_bus_loc_conversion(ROUTE.R_50))
     status, buses = convert_bus_coordinate(bus_result, conversion)
     buses_with_street = locate_buses_on_street(buses)
@@ -134,4 +134,4 @@ async def fetch_main(apply_filter: bool):
 
 
 if __name__ == "__main__":
-    print(asyncio.run(fetch_main(False)))
+    print(asyncio.run(fetch_main(False, bus_notify_filter_testonly)))
