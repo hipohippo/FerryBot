@@ -119,7 +119,7 @@ def locate_buses_on_street(buses: List[dict]) -> List[dict]:
 
 
 def compose_notification(bus: dict) -> str:
-    return f"Bus toward {bus.get('direction', '')} on {bus.get('st', '')}. Now between {bus.get('range_left', '')} and {bus.get('range_right', '')}, closer to {bus.get('closerTo', '')}"
+    return f"Bus toward {bus.get('direction', '')} on {bus.get('st', '')}. Now between {bus.get('range_left', '')} and {bus.get('range_right', '')}, closer to {bus.get('closer_to', '')}"
 
 
 def bus_notify_filter_testonly(bus: dict) -> bool:
