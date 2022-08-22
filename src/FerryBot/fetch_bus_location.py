@@ -80,11 +80,11 @@ def locate_bus_on_street(bus_location: gm.Point) -> dict:
     # left or right is the natural side, i.e. 7 is on the left and 5 on the right
     if actual_point.y >= coords[5][1]:
         range_left = 5
-        range_right = np.inf
+        range_right = 1
         closer_to = 5
 
     if actual_point.y <= coords[8][1]:
-        range_left = -np.inf
+        range_left = 12
         range_right = 8
         closer_to = 8
 

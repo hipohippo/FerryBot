@@ -12,10 +12,11 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 JOB_NAME_REPEAT = "run_bus_repeat"
-
+JOB_NAME_ONCE = "run_bus_once"
+POLL_INTERVAL = 15 # every 15 seconds
 
 def bus_notify_filter(bus: dict) -> bool:
-    return bus["st"] == 49 and bus["direction"] == "WEST" and bus["range_left"] <= 7  ## bus between 5 and 7
+    return bus["st"] in {49,50} and bus["direction"] == "WEST" and bus["range_left"] <= 7  ## bus between 5 and 7
 
 
 def time_of_day_filter() -> bool:
@@ -43,13 +44,13 @@ async def job_setup_repeat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.job_queue.get_jobs_by_name(JOB_NAME_REPEAT):
         context.job_queue.get_jobs_by_name(JOB_NAME_REPEAT)[0].enabled = True
     else:
-        context.job_queue.run_repeating(get_bus_repeat, interval=15, name=("%s" % JOB_NAME_REPEAT), chat_id=chat_id)
+        context.job_queue.run_repeating(get_bus_repeat, interval=POLL_INTERVAL, name=("%s" % JOB_NAME_REPEAT), chat_id=chat_id)
 
 
 async def job_run_once(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     await context.bot.send_message(chat_id=chat_id, text="...fetching")
-    context.job_queue.run_once(get_bus_once, when=0, name="run_bus_once", chat_id=chat_id)  # now
+    context.job_queue.run_once(get_bus_once, when=0, name=JOB_NAME_ONCE, chat_id=chat_id)  # now
 
 
 async def job_disable_repeat(update: Update, context: ContextTypes.DEFAULT_TYPE):
